@@ -1,4 +1,4 @@
-# fpic_app
+# FPIC Cambodia
 
 A new Flutter project.
 
