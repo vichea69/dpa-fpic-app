@@ -13,6 +13,8 @@ import '../constants.dart';
 import '../main.dart';
 import '../widgets/home_list.dart';
 import '../widgets/language_switcher.dart';
+import '../widgets/auth_service.dart';
+import 'login_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -112,12 +114,56 @@ class HomeScreen extends StatelessWidget {
                           ),
                           child: Column(
                             children: [
-                              // Language switch at top-right
-                              Container(
-                                alignment: Alignment.topRight,
-                                padding:
-                                    EdgeInsets.only(top: 10.0, right: 25.0),
-                                child: LanguageSwitcher(),
+                              // Top row: logout (left) and language switcher (right)
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    top: 10.0, left: 16.0, right: 16.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.logout,
+                                          color: Colors.black87),
+                                      tooltip: 'Logout',
+                                      onPressed: () async {
+                                        final confirm = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: const Text('Confirm logout'),
+                                            content: const Text(
+                                                'Are you sure you want to logout?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.of(context)
+                                                        .pop(false),
+                                                child: const Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.of(context)
+                                                        .pop(true),
+                                                child: const Text('Logout'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                        if (confirm == true) {
+                                          await AuthService.logout();
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                const LoginScreen()),
+                                                (route) => false,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                    LanguageSwitcher(),
+                                  ],
+                                ),
                               ),
 
                               // Search field
@@ -129,7 +175,7 @@ class HomeScreen extends StatelessWidget {
                                   keyboardType: TextInputType.text,
                                   onFieldSubmitted: (value) {
                                     var results =
-                                        _filterResults(value, localization);
+                                    _filterResults(value, localization);
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(

@@ -8,6 +8,8 @@ import 'package:fpic_app/data/repository.dart';
 import 'package:fpic_app/screens/loading_screen.dart';
 import 'package:fpic_app/screens/main_screen.dart';
 import 'package:fpic_app/screens/root_screen.dart';
+import 'package:fpic_app/screens/login_screen.dart';
+import 'package:fpic_app/widgets/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bloc/menu_bloc.dart';
@@ -49,6 +51,7 @@ void main() async {
   ]);
 
   await App.init();
+  await AuthService.init();
 
   runApp(FPICApp(repository: Repository()));
 }
@@ -65,7 +68,7 @@ class FPICApp extends StatelessWidget {
     return MultiBlocProvider(providers: [
       BlocProvider<MetaBloc>(
         create: (BuildContext context) =>
-            MetaBloc(repository: repository)..add(const MetaRequested()),
+        MetaBloc(repository: repository)..add(const MetaRequested()),
       ),
       BlocProvider<MenuBloc>(
         create: (BuildContext context) => MenuBloc(repository: repository),
@@ -93,19 +96,21 @@ class _FPICAppViewState extends State<FPICAppView> {
       debugShowCheckedModeBanner: false,
       home: BlocBuilder<MetaBloc, MetaState>(
           builder: (BuildContext context, MetaState state) {
-        if (state is MetaLoading) {
-          BlocProvider.of<MenuBloc>(context).add(const MenuRequested());
+            if (state is MetaLoading) {
+              BlocProvider.of<MenuBloc>(context).add(const MenuRequested());
 
-          return LoadingScreen();
-        }
-        if (state is MetaLoadingSuccess) {
-          return const RootScreen();
-        }
-        if (state is MetaLoadingFailure) {
-          return ErrorScreen();
-        }
-        return Container();
-      }),
+              return LoadingScreen();
+            }
+            if (state is MetaLoadingSuccess) {
+              return AuthService.isLoggedIn
+                  ? const RootScreen()
+                  : const LoginScreen();
+            }
+            if (state is MetaLoadingFailure) {
+              return ErrorScreen();
+            }
+            return Container();
+          }),
     );
   }
 }
