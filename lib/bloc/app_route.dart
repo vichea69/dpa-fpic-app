@@ -26,9 +26,18 @@ class AppRoute extends StatelessWidget {
     return BlocBuilder<LocalizationCubit, Localization>(
       builder: (BuildContext context, Localization localization) {
         final isKhmer = localization == Localization.Khmer;
-        final labels = isKhmer
+        final labelsBase = isKhmer
             ? ['ទំព័រដើម', 'បណ្ណាល័យ', 'ទំនាក់ទំនង']
             : ['Home', 'Library', 'Contact'];
+
+        final showAccount =
+            (App.meta?.first_logo_section_text ?? '').trim().toLowerCase() ==
+                'login';
+
+        final labels = List<String>.from(labelsBase);
+        if (showAccount) {
+          labels.add(isKhmer ? 'គណនី' : 'Account');
+        }
 
         return Container(
           decoration: BoxDecoration(
@@ -68,11 +77,14 @@ class AppRoute extends StatelessWidget {
                   fontFamily: isKhmer ? KhmerFonts.battambang : null,
                   package: isKhmer ? 'khmer_fonts' : null,
                 ),
-                items: [
+                items: List<BottomNavigationBarItem>.unmodifiable([
                   _buildNavItem(Icons.home_rounded, labels[0], 0),
                   _buildNavItem(Icons.menu_book_sharp, labels[1], 1),
                   _buildNavItem(Icons.contact_mail, labels[2], 2),
-                ],
+                  if (showAccount)
+                    _buildNavItem(Icons.account_circle_outlined, labels.last,
+                        labels.length - 1),
+                ]),
               ),
             ),
           ),

@@ -114,53 +114,13 @@ class HomeScreen extends StatelessWidget {
                           ),
                           child: Column(
                             children: [
-                              // Top row: logout (left) and language switcher (right)
+                              // Top row: optional logout (left) and language switcher (right).
                               Padding(
                                 padding: EdgeInsets.only(
-                                    top: 10.0, left: 16.0, right: 16.0),
+                                    top: 10.0, left: 16.0, right: 30.0),
                                 child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    IconButton(
-                                      icon: Icon(Icons.logout,
-                                          color: Colors.black87),
-                                      tooltip: 'Logout',
-                                      onPressed: () async {
-                                        final confirm = await showDialog<bool>(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                            title: const Text('Confirm logout'),
-                                            content: const Text(
-                                                'Are you sure you want to logout?'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.of(context)
-                                                        .pop(false),
-                                                child: const Text('Cancel'),
-                                              ),
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.of(context)
-                                                        .pop(true),
-                                                child: const Text('Logout'),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                        if (confirm == true) {
-                                          await AuthService.logout();
-                                          Navigator.of(context)
-                                              .pushAndRemoveUntil(
-                                            MaterialPageRoute(
-                                                builder: (_) =>
-                                                const LoginScreen()),
-                                                (route) => false,
-                                          );
-                                        }
-                                      },
-                                    ),
                                     LanguageSwitcher(),
                                   ],
                                 ),
@@ -175,7 +135,7 @@ class HomeScreen extends StatelessWidget {
                                   keyboardType: TextInputType.text,
                                   onFieldSubmitted: (value) {
                                     var results =
-                                    _filterResults(value, localization);
+                                        _filterResults(value, localization);
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(

@@ -4,6 +4,7 @@ import 'package:fpic_app/main.dart';
 import 'main_screen.dart';
 import 'home_screen.dart';
 import 'contact_screen.dart';
+import 'account_screen.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({super.key});
@@ -75,13 +76,27 @@ class _RootScreenState extends State<RootScreen> {
       _findContactMenu();
     }
 
+    final firstText = App.meta?.first_logo_section_text ?? '';
+    final showAccount = firstText.trim().toLowerCase() == 'login';
+
     final tabs = <Widget>[
       const MainScreen(),
       HomeScreen(),
       _contactMenu != null && App.meta != null
           ? ContactScreen(_contactMenu, App.meta!)
           : Center(child: Text('Contact not available')),
+      if (showAccount) const AccountScreen(),
     ];
+
+    // Ensure current index is valid when account tab is hidden.
+    if (_currentIndex >= tabs.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _currentIndex = 0;
+          App.tabIndex.value = 0;
+        });
+      });
+    }
 
     return Scaffold(
       body: IndexedStack(

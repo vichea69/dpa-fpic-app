@@ -68,7 +68,7 @@ class FPICApp extends StatelessWidget {
     return MultiBlocProvider(providers: [
       BlocProvider<MetaBloc>(
         create: (BuildContext context) =>
-        MetaBloc(repository: repository)..add(const MetaRequested()),
+            MetaBloc(repository: repository)..add(const MetaRequested()),
       ),
       BlocProvider<MenuBloc>(
         create: (BuildContext context) => MenuBloc(repository: repository),
@@ -96,21 +96,31 @@ class _FPICAppViewState extends State<FPICAppView> {
       debugShowCheckedModeBanner: false,
       home: BlocBuilder<MetaBloc, MetaState>(
           builder: (BuildContext context, MetaState state) {
-            if (state is MetaLoading) {
-              BlocProvider.of<MenuBloc>(context).add(const MenuRequested());
+        if (state is MetaLoading) {
+          BlocProvider.of<MenuBloc>(context).add(const MenuRequested());
 
-              return LoadingScreen();
-            }
-            if (state is MetaLoadingSuccess) {
-              return AuthService.isLoggedIn
-                  ? const RootScreen()
-                  : const LoginScreen();
-            }
-            if (state is MetaLoadingFailure) {
-              return ErrorScreen();
-            }
-            return Container();
-          }),
+          return LoadingScreen();
+        }
+        if (state is MetaLoadingSuccess) {
+          // If meta indicates the special text value, use the login/root flow.
+          // Otherwise skip login and show the MainScreen directly.
+          final meta = App.meta;
+          final firstText = meta?.first_logo_section_text ?? '';
+          // Debug print to help verify what value is loaded at runtime.
+          // Remove or guard in production.
+          print('DEBUG: App.meta.first_logo_section_text="$firstText"');
+
+          if (firstText.trim().toLowerCase() == 'login') {
+            return AuthService.isLoggedIn ? const MainScreen(): const LoginScreen();
+          }
+          // Show RootScreen so the AppRoute (bottom navigation) is available.
+          return const RootScreen();
+        }
+        if (state is MetaLoadingFailure) {
+          return ErrorScreen();
+        }
+        return Container();
+      }),
     );
   }
 }

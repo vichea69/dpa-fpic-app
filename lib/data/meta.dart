@@ -54,6 +54,10 @@ class Meta {
         first_logo_section_text = json['first_logo_section_text'] ?? "",
         second_logo_section_text = json['second_logo_section_text'] ?? "",
         email_form = Email_Form.fromJson(json['email_form']);
+
+  get description => null;
+
+  get app_name => null;
 }
 
 class Email_Form {

@@ -7,7 +7,6 @@ import 'package:fpic_app/widgets/image_component.dart';
 import 'package:khmer_fonts/khmer_fonts.dart';
 import '../constants.dart';
 import '../widgets/logo_list.dart';
-import 'home_screen.dart';
 // contact and app route are managed by `RootScreen`
 // import 'contact_screen.dart';
 // import '../bloc/app_route.dart';

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fpic_app/screens/forgotpas_screen.dart';
 import 'package:fpic_app/screens/root_screen.dart';
+import 'package:fpic_app/screens/register_screen.dart';
 import 'package:fpic_app/widgets/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -56,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // Navigate to dashboard (RootScreen) and remove login from the stack
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const RootScreen()),
-            (route) => false,
+        (route) => false,
       );
     } on AuthException catch (e) {
       setState(() {
@@ -172,25 +174,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                     : Icons.visibility,
                               ),
                               onPressed: () => setState(
-                                    () => _obscurePassword = !_obscurePassword,
+                                () => _obscurePassword = !_obscurePassword,
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 45),
-                        // Align(
-                        //   alignment: Alignment.centerRight,
-                        //   child: TextButton(
-                        //     onPressed: () {
-                        //       ScaffoldMessenger.of(context).showSnackBar(
-                        //         const SnackBar(
-                        //           content: Text('Forgot password flow'),
-                        //         ),
-                        //       );
-                        //     },
-                        //     child: const Text('Forgot password?'),
-                        //   ),
-                        // ),
+                        const SizedBox(height: 12),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: _loading
+                                ? null
+                                : () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => const ForgotPasswordScreen(),
+                                      ),
+                                    );
+                                  },
+                            child: const Text('Forgot password?'),
+                          ),
+                        ),
                         if (_error != null)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
@@ -213,21 +217,58 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: _loading
                                 ? null
                                 : () {
-                              _attemptLogin();
-                            },
+                                    _attemptLogin();
+                                  },
                             child: _loading
                                 ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
                                 : const Text('Sign in'),
                           ),
                         ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: 50,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              textStyle: const TextStyle(fontSize: 16),
+                            ),
+                            onPressed: _loading
+                                ? null
+                                : () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => const RegisterScreen(),
+                                      ),
+                                    );
+                                  },
+                          child: const Text('Create account'),
+                          ),
+                        ),
                         const SizedBox(height: 12),
+                        // Align(
+                        //   alignment: Alignment.centerRight,
+                        //   child: TextButton(
+                        //     onPressed: _loading
+                        //         ? null
+                        //         : () {
+                        //             Navigator.of(context).push(
+                        //               MaterialPageRoute(
+                        //                 builder: (_) => const RegisterScreen(),
+                        //               ),
+                        //             );
+                        //           },
+                        //     child: const Text('Create account'),
+                        //   ),
+                        // ),
                         Row(
                           children: [
                             Expanded(
@@ -250,21 +291,21 @@ class _LoginScreenState extends State<LoginScreen> {
                               Icons.phone,
                               '',
                               phoneLink,
-                                  (v) {},
+                              (v) {},
                               const Color(0xFF2E7D32), // green
                             ),
                             _socialIconButton(
                               Icons.language,
                               '',
                               websiteLink,
-                                  (v) {},
+                              (v) {},
                               const Color(0xFF0288D1), // blue
                             ),
                             _socialIconButton(
                               Icons.facebook,
                               '',
                               facebookLink,
-                                  (v) {},
+                              (v) {},
                               const Color(0xFF1877F2), // fb blue
                             ),
                           ],
@@ -282,12 +323,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _socialIconButton(
-      IconData icon,
-      String hint,
-      String current,
-      void Function(String) onSave,
-      Color color,
-      ) {
+    IconData icon,
+    String hint,
+    String current,
+    void Function(String) onSave,
+    Color color,
+  ) {
     return Column(
       children: [
         InkResponse(

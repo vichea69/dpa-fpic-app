@@ -12,7 +12,7 @@ import 'package:khmer_fonts/khmer_fonts.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import 'package:fpic_app/constants.dart';
 import 'package:fpic_app/data/menupage.dart';
@@ -34,38 +34,47 @@ class YTPlayer extends StatefulWidget {
 }
 
 class YTPlayerState extends State<YTPlayer> {
-  late YoutubePlayerController _controller;
+  YoutubePlayerController? _controller;
 
   @override
   void initState() {
     super.initState();
-    var id = YoutubePlayerController.convertUrlToId(widget.url);
-    _controller = YoutubePlayerController.fromVideoId(
-      videoId: id!,
-      autoPlay: false,
-      params: const YoutubePlayerParams(
-        showControls: true,
-        showFullscreenButton: true,
-        enableCaption: false,
-        showVideoAnnotations: false,
-        enableJavaScript: false,
-        playsInline: false,
-        loop: false,
+    var id = YoutubePlayer.convertUrlToId(widget.url);
+    if (id != null) {
+      _controller = YoutubePlayerController(
+        initialVideoId: id,
+        flags: const YoutubePlayerFlags(
+          autoPlay: false,
+          mute: false,
+          enableCaption: false,
+          showLiveFullscreenButton: false,
+          forceHD: false,
+          loop: false,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_controller == null) {
+      return Center(child: Text('Invalid YouTube URL'));
+    }
+    return YoutubePlayer(
+      controller: _controller!,
+      showVideoProgressIndicator: true,
+      progressIndicatorColor: Colors.blueAccent,
+      progressColors: const ProgressBarColors(
+        playedColor: Colors.blue,
+        handleColor: Colors.blueAccent,
       ),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    final player = YoutubePlayer(
-      gestureRecognizers: const {},
-      controller: _controller,
-    );
-    return YoutubePlayerControllerProvider(
-      key: UniqueKey(),
-      controller: _controller,
-      child: player,
-    );
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
   }
 }
 
@@ -78,6 +87,88 @@ class ListItemVideo extends StatefulWidget {
   _ListItemVideoState createState() => _ListItemVideoState();
 }
 
+class VideoThumbnailCard extends StatelessWidget {
+  final Video video;
+
+  VideoThumbnailCard({required this.video});
+
+  String? _youtubeId(String url) {
+    try {
+      return YoutubePlayer.convertUrlToId(url);
+    } catch (e) {
+      return null;
+    }
+  }
+
+//update youtube
+  @override
+  Widget build(BuildContext context) {
+    final thumb = (video.thumbnail != null && video.thumbnail.isNotEmpty)
+        ? video.thumbnail
+        : (_youtubeId(video.url) != null
+            ? "https://img.youtube.com/vi/${_youtubeId(video.url)}/hqdefault.jpg"
+            : "");
+
+    Widget imageWidget;
+    if (thumb.startsWith('http')) {
+      imageWidget = Image.network(
+        thumb,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: 200,
+        loadingBuilder: (c, child, progress) => progress == null
+            ? child
+            : Container(
+                height: 200,
+                child: Center(
+                    child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation(Color(0xffcaf0f8)),
+                ))),
+        errorBuilder: (c, o, s) => Container(
+          height: 200,
+          color: Colors.grey[200],
+          child: Center(child: Icon(Icons.broken_image)),
+        ),
+      );
+    } else {
+      imageWidget = FPICImage(thumb, fit: BoxFit.cover, height: 200);
+    }
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+          return Scaffold(
+            appBar: AppBar(backgroundColor: Colors.black87, title: Text('')),
+            backgroundColor: Colors.black,
+            body: Center(child: YTPlayer(video.url)),
+          );
+        }));
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
+        width: double.infinity,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Stack(
+            children: [
+              SizedBox(width: double.infinity, child: imageWidget),
+              Positioned.fill(
+                child: Container(
+                  alignment: Alignment.center,
+                  color: Colors.black26,
+                  child: Icon(Icons.play_circle_fill,
+                      size: 64, color: Colors.white70),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+//end update youtube
 class _ListItemVideoState extends State<ListItemVideo>
     with AutomaticKeepAliveClientMixin<ListItemVideo> {
   @override
@@ -213,16 +304,16 @@ class ContentScreen extends StatelessWidget {
           key: _scaffoldKey,
           body: SafeArea(
             child: Container(
-              // decoration: BoxDecoration(
-              //   gradient: LinearGradient(
-              //     begin: Alignment.topCenter,
-              //     end: Alignment.bottomCenter,
-              //     colors: [
-              //       Colors.white,
-              //       Color(0xFFF8F8EE),
-              //     ],
-              //   ),
-              // ),
+// decoration: BoxDecoration(
+//   gradient: LinearGradient(
+//     begin: Alignment.topCenter,
+//     end: Alignment.bottomCenter,
+//     colors: [
+//       Colors.white,
+//       Color(0xFFF8F8EE),
+//     ],
+//   ),
+// ),
               child: Column(
                 children: [
                   Stack(children: [
@@ -244,22 +335,23 @@ class ContentScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12.0)),
                       child: Container(
                         width: double.infinity,
-                        // decoration: BoxDecoration(
-                        //   gradient: LinearGradient(
-                        //     begin: Alignment.topCenter,
-                        //     end: Alignment.bottomCenter,
-                        //     colors: [
-                        //       Colors.white,
-                        //       Color(0xFFF8F8EE),
-                        //     ],
-                        //   ),
-                        // ),
+// decoration: BoxDecoration(
+//   gradient: LinearGradient(
+//     begin: Alignment.topCenter,
+//     end: Alignment.bottomCenter,
+//     colors: [
+//       Colors.white,
+//       Color(0xFFF8F8EE),
+//     ],
+//   ),
+// ),
                         child: CustomScrollView(
                           slivers: [
                             SliverList(
                               delegate: SliverChildListDelegate([
                                 Container(
-                                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 10),
                                   child: Column(
                                     children: [
                                       Text(
@@ -288,11 +380,7 @@ class ContentScreen extends StatelessWidget {
                                   var c =
                                       _retrieveContents(localization)[index];
                                   if (c is Video) {
-                                    return Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 10, horizontal: 10),
-                                        child: ListItemVideo(
-                                            video: YTPlayer(c.url)));
+                                    return VideoThumbnailCard(video: c);
                                   }
 
                                   if (c is Document) {
@@ -334,17 +422,17 @@ class ContentScreen extends StatelessWidget {
                                     return GestureDetector(
                                         child: Container(
                                           decoration: BoxDecoration(
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.2),
-                                              spreadRadius: 2,
-                                              blurRadius: 5,
-                                              offset: Offset(0,
-                                                  3), // changes position of shadow
-                                            ),
-                                          ],
-                                        ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.2),
+                                                spreadRadius: 2,
+                                                blurRadius: 5,
+                                                offset: Offset(0,
+                                                    3), // changes position of shadow
+                                              ),
+                                            ],
+                                          ),
                                           margin: EdgeInsets.symmetric(
                                               vertical: 10.0, horizontal: 10),
                                           width:
@@ -363,7 +451,7 @@ class ContentScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Back action moved to AppBar leading (icon-only) in Header
+// Back action moved to AppBar leading (icon-only) in Header
                 ],
               ),
             ),
