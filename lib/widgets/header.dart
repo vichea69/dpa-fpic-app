@@ -26,63 +26,99 @@ class Header extends StatelessWidget {
       return Column(children: [
         Stack(children: [
           Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.white,
-                    Color.fromARGB(255, 245, 245, 225),
-                  ],
-                ),
+              // decoration: BoxDecoration(
+              //   gradient: LinearGradient(
+              //     begin: Alignment.topCenter,
+              //     end: Alignment.bottomCenter,
+              //     colors: [
+              //       Colors.white,
+              //       Color.fromARGB(255, 245, 245, 225),
+              //     ],
+              //   ),
 
-                // gradient: LinearGradient(
-                //   begin: Alignment.centerLeft,
-                //   end: Alignment.centerRight,
-                //   colors: [
-                //     Color.fromARGB(
-                //         200, 32, 82, 168), // A deep teal/blue at the top
-                //     // Color.fromARGB(255, 3, 147, 142), // A lighter teal in the middle
-                //     Color.fromARGB(200, 30, 173, 106),
-                //   ],
-                // ),
-                boxShadow: [
-                  BoxShadow(
-                    color:
-                        const Color.fromARGB(255, 48, 50, 50).withOpacity(0.2),
-                    blurRadius: 2,
-                    offset: Offset(0, 5.0),
-                  ),
-                ],
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-              ),
-              height: MediaQuery.of(context).size.height * 0.30,
+              //   // gradient: LinearGradient(
+              //   //   begin: Alignment.centerLeft,
+              //   //   end: Alignment.centerRight,
+              //   //   colors: [
+              //   //     Color.fromARGB(
+              //   //         200, 32, 82, 168), // A deep teal/blue at the top
+              //   //     // Color.fromARGB(255, 3, 147, 142), // A lighter teal in the middle
+              //   //     Color.fromARGB(200, 30, 173, 106),
+              //   //   ],
+              //   // ),
+              //   boxShadow: [
+              //     BoxShadow(
+              //       color:
+              //           const Color.fromARGB(255, 48, 50, 50).withOpacity(0.2),
+              //       blurRadius: 2,
+              //       offset: Offset(0, 5.0),
+              //     ),
+              //   ],
+              //   borderRadius: BorderRadius.only(
+              //     bottomLeft: Radius.circular(20),
+              //     bottomRight: Radius.circular(20),
+              //   ),
+              // ),
+              height: MediaQuery.of(context).size.height * 0.33,
               padding: EdgeInsets.only(top: 30.0, bottom: 10.0),
               width: MediaQuery.of(context).size.width,
               child: Container(
-                  margin: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0),
+                  margin: EdgeInsets.only(top: 20.0),
                   child: this.menu != null
                       ? this.menu?.image != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(20.0),
-                              child: SizedBox(
-                                  height: 140,
+                          ? Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                    blurRadius: 14,
+                                    offset: Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16.0),
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.18,
                                   width: double.infinity,
-                                  child: FPICImage(this.menu!.image,
-                                      fit: BoxFit.contain, height: 140)),
+                                  child: FPICImage(
+                                    this.menu!.image,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ),
+                                ),
+                              ),
                             )
                           : null
                       : this.page?.image != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(20.0),
-                              child: SizedBox(
-                                  height: 140,
+                          ? Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.3),
+                                    blurRadius: 14,
+                                    offset: Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(16.0),
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.18,
                                   width: double.infinity,
-                                  child: FPICImage(this.page!.image,
-                                      fit: BoxFit.contain, height: 140)),
+                                  child: FPICImage(
+                                    this.page!.image,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ),
+                                ),
+                              ),
                             )
                           : null)),
           // positioned language switcher to top-right

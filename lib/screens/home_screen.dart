@@ -184,19 +184,19 @@ class HomeScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.only(
-                              top: 30.0, bottom: 20.0, left: 15.0, right: 15.0),
-                          height: 70.0,
-                          width: MediaQuery.of(context).size.width,
-                          child: HomeList(App.menus, App.pages, meta!, true),
-                        ),
-                        const SizedBox(height: 10.0),
-                        Divider(
-                          height: 1,
-                          thickness: 1,
-                          color: Colors.black12,
-                        ),
+                        // Container(
+                        //   margin: EdgeInsets.only(
+                        //       top: 30.0, bottom: 20.0, left: 15.0, right: 15.0),
+                        //   height: 70.0,
+                        //   width: MediaQuery.of(context).size.width,
+                        //   child: HomeList(App.menus, App.pages, meta!, true),
+                        // ),
+                        // const SizedBox(height: 10.0),
+                        // Divider(
+                        //   height: 1,
+                        //   thickness: 1,
+                        //   color: Colors.black12,
+                        // ),
                         SizedBox(height: 10.0),
                         Container(
                           padding: EdgeInsets.only(

@@ -253,32 +253,39 @@ class MainScreenState extends State<MainScreen> {
                           ),
                         ),
                       ),
-                      // Logos List
-                      LogoList(meta.implemented_by_logos),
+                      // Logos List (match size of funded-by logos)
+                      LogoList(meta.implemented_by_logos,
+                          itemWidth: 120.0,
+                          itemHeight: 60.0,
+                          containerHeight: 60.0),
                       if (meta.funded_by_logos.isNotEmpty)
                         Container(
                           margin: EdgeInsets.only(bottom: 10),
                           child: Column(children: [
                             Container(
-                              margin: EdgeInsets.only(top: 25),
-                              child: LogoList(meta.funded_by_logos),
-                            ),
-                            Container(
                               margin: EdgeInsets.only(top: 10),
-                              // width: MediaQuery.of(context).size.width - 60,
-                              child: Center(
-                                child: Text(
-                                  meta.second_logo_section_text,
-                                  maxLines: 4,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
+                              child: LogoList(meta.funded_by_logos,
+                                  // increased by 20% from current size
+                                  itemWidth: 90.0,
+                                  itemHeight: 93.0,
+                                  containerHeight: 93.0),
                             ),
+                            // Container(
+                            //   margin: EdgeInsets.only(top: 10),
+                            // width: MediaQuery.of(context).size.width - 60,
+                            // child: Center(
+                            //   child: Text(
+                            //     meta.second_logo_section_text,
+                            //     maxLines: 4,
+                            //     overflow: TextOverflow.ellipsis,
+                            //     textAlign: TextAlign.center,
+                            //     style: TextStyle(
+                            //       fontSize: 14,
+                            //       color: Colors.grey,
+                            //     ),
+                            //   ),
+                            // ),
+                            // ),
                           ]),
                         )
                     ],
